@@ -18,10 +18,10 @@
 
     <div class="site-shell">
       <aside class="sidebar" aria-label="主导航">
-        <a class="signature" href="#" aria-label="Sy Yann home">Sy</a>
+        <a class="signature" href="#home" aria-label="Sy Yann home" data-view-link="home">Sy</a>
 
         <nav class="side-nav">
-          <a class="side-link is-active" href="#" aria-current="page">
+          <a class="side-link is-active" href="#home" aria-current="page" data-view-link="home">
             <i data-lucide="home"></i>
             <span>Home</span>
           </a>
@@ -29,11 +29,11 @@
             <i data-lucide="heart"></i>
             <span>Thoughts</span>
           </a>
-          <a class="side-link" href="#">
+          <a class="side-link" href="#orbit" data-view-link="orbit">
             <i data-lucide="orbit"></i>
             <span>Orbit</span>
           </a>
-          <a class="side-link" href="#">
+          <a class="side-link" href="#playlist" data-view-link="playlist">
             <i data-lucide="music"></i>
             <span>Playlist</span>
           </a>
@@ -52,8 +52,10 @@
 
       <main class="main">
         <nav class="top-nav" aria-label="页面导航">
-          <a class="is-current" href="#">Home</a>
-          <a href="#">About</a>
+          <a class="is-current" href="#home" data-view-link="home">Home</a>
+          <a href="#about" data-view-link="about">About</a>
+          <a href="#orbit" data-view-link="orbit">Orbit</a>
+          <a href="#playlist" data-view-link="playlist">Playlist</a>
         </nav>
 
         <div class="time-pill" aria-label="夜晚 22:47" data-time-pill>
@@ -62,145 +64,505 @@
           <time datetime="22:47" data-time-display>22:47</time>
         </div>
 
-        <section class="hero" aria-labelledby="hero-title">
-          <div class="hero-copy">
-            <h1 id="hero-title">Sy Yann</h1>
-            <p class="hero-lead">
-              在代码、设计、文字与情绪之间，<br />
-              慢慢搭建自己的<span>小宇宙</span>。
-            </p>
-            <p class="hero-intro">
-              你好呀！这里不是简历，也不是作品集。<br />
-              只是一个安静的角落，记录我对世界的感受与思考，<br />
-              以及那些构成我的细碎而温柔的东西。<br />
-              愿你在这里，感到放松，也感到被理解。
-            </p>
+        <div class="page-view home-page is-active" data-page="home">
+          <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-copy">
+              <h1 id="hero-title">Sy Yann</h1>
+              <p class="hero-lead">
+                在代码、设计、文字与情绪之间，<br />
+                慢慢搭建自己的<span>小宇宙</span>。
+              </p>
+              <p class="hero-intro">
+                你好呀！这里不是简历，也不是作品集。<br />
+                只是一个安静的角落，记录我对世界的感受与思考，<br />
+                以及那些构成我的细碎而温柔的东西。<br />
+                愿你在这里，感到放松，也感到被理解。
+              </p>
 
-            <div class="identity-pills" aria-label="身份标签">
-              <span><i data-lucide="venus"></i>She / Her</span>
-              <span>INFP-T</span>
-              <span>理想主义</span>
-              <span>系统控</span>
-              <span>温柔的技术派</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="card-grid" aria-label="主页内容">
-          <article class="glass-card about-card">
-            <header class="card-header">
-              <div>
-                <i data-lucide="sparkles"></i>
-                <h2>关于我</h2>
+              <div class="identity-pills" aria-label="身份标签">
+                <span><i data-lucide="venus"></i>She / Her</span>
+                <span>INFP-T</span>
+                <span>理想主义</span>
+                <span>系统控</span>
+                <span>温柔的技术派</span>
               </div>
-              <span>About Me</span>
-            </header>
-            <p>
-              一个热爱创造与思考的灵魂，<br />
-              在代码与设计中寻找秩序，<br />
-              在文字与心理学里理解人心，<br />
-              在哲学与系统中寻找意义。<br />
-              我是一个感性且理性的人，<br />
-              也是一个在成为自己的路上，<br />
-              温柔前行的 trans girl。
-            </p>
-            <a class="text-link" href="#">了解更多我 <span aria-hidden="true">→</span></a>
-          </article>
+            </div>
+          </section>
 
-          <article class="glass-card orbit-card">
-            <header class="card-header">
-              <div>
+          <section class="card-grid" aria-label="主页内容">
+            <article class="glass-card about-card">
+              <header class="card-header">
+                <div>
+                  <i data-lucide="sparkles"></i>
+                  <h2>关于我</h2>
+                </div>
+                <span>About Me</span>
+              </header>
+              <p>
+                一个热爱创造与思考的灵魂，<br />
+                在代码与设计中寻找秩序，<br />
+                在文字与心理学里理解人心，<br />
+                在哲学与系统中寻找意义。<br />
+                我是一个感性且理性的人，<br />
+                也是一个在成为自己的路上，<br />
+                温柔前行的 trans girl。
+              </p>
+              <a class="text-link" href="#about" data-view-link="about">了解更多我 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="glass-card orbit-card">
+              <header class="card-header">
+                <div>
+                  <i data-lucide="orbit"></i>
+                  <h2>小小宇宙</h2>
+                </div>
+                <span>Orbit</span>
+              </header>
+              <div class="tag-cloud" aria-label="小小宇宙标签">
+                <span>编程</span>
+                <span>设计</span>
+                <span>写作</span>
+                <span>心理学</span>
+                <span>哲学</span>
+                <span>系统</span>
+                <span>ACG</span>
+                <span>Minecraft</span>
+                <span>音乐</span>
+                <span>天空</span>
+                <span>…</span>
+              </div>
+            </article>
+
+            <article class="glass-card fragments-card">
+              <header class="card-header">
+                <div>
+                  <i data-lucide="quote"></i>
+                  <h2>片段</h2>
+                </div>
+                <span>Fragments</span>
+              </header>
+              <blockquote>
+                我喜欢在深夜思考一些<br />
+                不太着急的问题，<br />
+                比如我是谁，<br />
+                我想去哪里，<br />
+                以及怎样才能对这个世界，<br />
+                温柔而坚定地存在。
+              </blockquote>
+              <svg class="pulse-line" viewBox="0 0 120 16" fill="none" aria-hidden="true">
+                <path d="M0 8 H46 l3 0 2.5 -5 3 9.5 3 -8 2.5 3.5 3 0 H120" />
+              </svg>
+            </article>
+
+            <article class="glass-card currently-card">
+              <header class="card-header">
+                <div>
+                  <i data-lucide="heart"></i>
+                  <h2>现在偏爱的东西</h2>
+                </div>
+                <span>Currently</span>
+              </header>
+              <div class="currently-list">
+                <span><i data-lucide="moon"></i>夜晚</span>
+                <span><i data-lucide="cloud-rain"></i>雨天</span>
+                <span><i data-lucide="sparkles"></i>低饱和霓虹</span>
+                <span><i data-lucide="cloud-sun"></i>干净的界面</span>
+                <span><i data-lucide="message-circle"></i>长对话</span>
+                <span><i data-lucide="map-pin"></i>远方</span>
+                <span><i data-lucide="fan"></i>风扇声</span>
+                <span><i data-lucide="lightbulb"></i>安静的灯光</span>
+              </div>
+              <p class="and-more">And more... ♡</p>
+            </article>
+          </section>
+
+          <footer class="footer-panel">
+            <div class="footer-copy">
+              <h2>想说点什么？</h2>
+              <p>我很乐意收到你的来信。</p>
+            </div>
+            <div class="socials" aria-label="社交链接">
+              <a href="#" aria-label="Email"><i data-lucide="mail"></i></a>
+              <a href="#" aria-label="GitHub">
+                <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 .9C5.9.9 1 5.8 1 11.9c0 4.9 3.2 9 7.6 10.4.6.1.8-.2.8-.5v-2c-3.1.7-3.8-1.3-3.8-1.3-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.7 1.9 2.9 1.4.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.5.1-3 0 0 .9-.3 3.1 1.1.9-.2 1.9-.4 2.9-.4s2 .1 2.9.4c2.1-1.4 3.1-1.1 3.1-1.1.6 1.5.2 2.7.1 3 .7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.3.8 1 .8 2v2.9c0 .3.2.6.8.5 4.4-1.5 7.5-5.6 7.5-10.4C23 5.8 18.1.9 12 .9Z"
+                  />
+                </svg>
+              </a>
+              <a href="#" aria-label="Twitter">
+                <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M21.7 6.1c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.2 1.7-2.1-.7.4-1.6.8-2.4.9-.7-.7-1.7-1.2-2.8-1.2-2.1 0-3.8 1.7-3.8 3.8 0 .3 0 .6.1.9-3.2-.2-6-1.7-7.8-4-.3.6-.5 1.2-.5 1.9 0 1.3.7 2.5 1.7 3.1-.6 0-1.2-.2-1.7-.5v.1c0 1.9 1.3 3.4 3.1 3.8-.3.1-.7.1-1 .1-.3 0-.5 0-.7-.1.5 1.5 1.9 2.6 3.5 2.7-1.3 1-2.9 1.6-4.7 1.6-.3 0-.6 0-.9-.1 1.7 1.1 3.7 1.7 5.8 1.7 6.9 0 10.7-5.7 10.7-10.7v-.5c.8-.5 1.4-1.2 1.9-2Z"
+                  />
+                </svg>
+              </a>
+              <a href="#" aria-label="Music"><i data-lucide="music"></i></a>
+            </div>
+            <div class="copyright">
+              <span>© 2024&nbsp; Sy Yann</span>
+              <i data-lucide="sparkles" aria-hidden="true"></i>
+            </div>
+          </footer>
+        </div>
+
+        <div class="page-view about-page" data-page="about">
+          <section class="about-hero" aria-labelledby="about-title">
+            <div class="about-title-block">
+              <h1 id="about-title">关于我</h1>
+              <p>About Me</p>
+            </div>
+
+            <div class="about-feature-grid">
+              <article class="about-quote-card">
+                <span class="quote-mark" aria-hidden="true">“</span>
+                <p>
+                  我喜欢在代码与设计里寻找秩序，<br />
+                  也喜欢在文字、心理学与哲学里<br />
+                  理解自己和世界。
+                </p>
+                <hr />
+                <p>
+                  比起证明什么，我更想慢慢成为自己。<br />
+                  这里没有标准答案，只有一个正在生长、<br />
+                  也在温柔修补自己的灵魂。
+                </p>
+                <span class="quote-end" aria-hidden="true">”</span>
+                <p class="about-script">a trans girl, becoming myself.</p>
+              </article>
+
+              <article class="about-profile-card">
+                <header>
+                  <div>
+                    <i data-lucide="sparkles"></i>
+                    <h2>关于我</h2>
+                  </div>
+                </header>
+                <div class="about-tag-cloud" aria-label="关于我标签">
+                  <span>她 / 她</span>
+                  <span>INFJ-T</span>
+                  <span>跨性别女孩</span>
+                  <span>设计</span>
+                  <span>写作</span>
+                  <span>代码</span>
+                  <span>心理学</span>
+                  <span>哲学</span>
+                  <span>系统思考</span>
+                  <span>ACG</span>
+                  <span>Minecraft</span>
+                  <span>音乐</span>
+                  <span>夜猫子</span>
+                  <span>…</span>
+                </div>
+                <p>在理性与感性之间，努力搭建一座属于自己的小宇宙。♡</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="about-mini-grid" aria-label="更多关于我">
+            <article>
+              <i data-lucide="sparkles"></i>
+              <h2>我相信的事</h2>
+              <p>
+                温柔不是软弱<br />
+                理解比判断更难<br />
+                美感也是一种秩序
+              </p>
+            </article>
+            <article>
+              <i data-lucide="heart"></i>
+              <h2>我偏爱的东西</h2>
+              <p>
+                夜晚 / 雨天<br />
+                低饱和霓虹 / 长对话<br />
+                安静的灯光
+              </p>
+            </article>
+            <article>
+              <i data-lucide="moon"></i>
+              <h2>小小习惯</h2>
+              <p>
+                深夜写字<br />
+                收藏句子<br />
+                盯着天空发呆
+              </p>
+            </article>
+            <article>
+              <i data-lucide="sparkles"></i>
+              <h2>想成为的人</h2>
+              <p>
+                清醒而柔软<br />
+                理性也有温度<br />
+                能保护自己，也能爱人
+              </p>
+            </article>
+          </section>
+
+          <p class="about-closing">感谢你路过我的宇宙，愿你也能被温柔以待。 ♡</p>
+        </div>
+
+        <div class="page-view orbit-page" data-page="orbit">
+          <section class="orbit-hero" aria-labelledby="orbit-title">
+            <div class="orbit-aside">
+              <div class="orbit-intro">
+                <h1 id="orbit-title">小小宇宙</h1>
+                <p class="orbit-kicker">Orbit</p>
+                <p>
+                  这里是围绕着我的事物、想法、情感与美学的星轨图。<br />
+                  它们如星辰般环绕，照亮我，也定义着我。
+                </p>
+                <span class="tiny-diamond" aria-hidden="true">✧</span>
+              </div>
+
+              <article class="orbit-quote-card">
+                <span aria-hidden="true">“</span>
+                <p>
+                  我不是某个单一的点，<br />
+                  而是一片由热爱、思考与<br />
+                  感知编织的星云。<br /><br />
+                  在不断的探索与靠近中，<br />
+                  我正在成为我自己。
+                </p>
+                <b aria-hidden="true">”</b>
+              </article>
+            </div>
+
+            <div class="orbit-map" aria-label="小小宇宙星轨图">
+              <div class="orbit-stage">
+                <div class="orbit-ring ring-one"></div>
+                <div class="orbit-ring ring-two"></div>
+                <div class="orbit-ring ring-three"></div>
+                <div class="orbit-ring ring-four"></div>
+
+                <div class="orbit-core">
+                  <span class="core-signature">Sy</span>
+                  <span>我的宇宙核心</span>
+                  <i data-lucide="heart"></i>
+                </div>
+
+                <div class="orbit-node node-code is-top"><b><i data-lucide="code-2"></i></b><span>代码编程</span></div>
+                <div class="orbit-node node-design is-top"><b><i data-lucide="pencil"></i></b><span>设计</span></div>
+                <div class="orbit-node node-writing"><b><i data-lucide="pen-line"></i></b><span>写作</span></div>
+                <div class="orbit-node node-ideal"><b><i data-lucide="box"></i></b><span>理想主义</span></div>
+                <div class="orbit-node node-psych"><b><i data-lucide="brain"></i></b><span>心理学</span></div>
+                <div class="orbit-node node-philosophy"><b><i data-lucide="landmark"></i></b><span>哲学</span></div>
+                <div class="orbit-node node-acg is-top"><b><i data-lucide="star"></i></b><span>ACG</span></div>
+                <div class="orbit-node node-minecraft"><b><i data-lucide="box"></i></b><span>Minecraft</span></div>
+                <div class="orbit-node node-warm"><b><i data-lucide="heart"></i></b><span>温柔</span></div>
+                <div class="orbit-node node-sky"><b><i data-lucide="cloud-sun"></i></b><span>天空</span></div>
+                <div class="orbit-node node-music"><b><i data-lucide="music"></i></b><span>音乐</span></div>
+                <div class="orbit-node node-night"><b><i data-lucide="moon"></i></b><span>深夜</span></div>
+                <div class="orbit-node node-rain"><b><i data-lucide="cloud-rain"></i></b><span>雨天</span></div>
+                <div class="orbit-node node-chat"><b><i data-lucide="message-circle"></i></b><span>长对话</span></div>
+                <div class="orbit-node node-fan"><b><i data-lucide="fan"></i></b><span>风扇声</span></div>
+                <div class="orbit-node node-lamp"><b><i data-lucide="lightbulb"></i></b><span>安静的灯光</span></div>
+                <div class="orbit-node node-far"><b><i data-lucide="map-pin"></i></b><span>远方</span></div>
+                <div class="orbit-node node-neon"><b><i data-lucide="sparkles"></i></b><span>低饱和霓虹</span></div>
+              </div>
+            </div>
+
+            <article class="orbit-fragment-card">
+              <header>
                 <i data-lucide="orbit"></i>
-                <h2>小小宇宙</h2>
-              </div>
-              <span>Orbit</span>
-            </header>
-            <div class="tag-cloud" aria-label="小小宇宙标签">
-              <span>编程</span>
-              <span>设计</span>
-              <span>写作</span>
-              <span>心理学</span>
-              <span>哲学</span>
-              <span>系统</span>
-              <span>ACG</span>
-              <span>Minecraft</span>
-              <span>音乐</span>
-              <span>天空</span>
-              <span>…</span>
-            </div>
-          </article>
-
-          <article class="glass-card fragments-card">
-            <header class="card-header">
-              <div>
-                <i data-lucide="quote"></i>
-                <h2>片段</h2>
-              </div>
-              <span>Fragments</span>
-            </header>
-            <blockquote>
-              我喜欢在深夜思考一些<br />
-              不太着急的问题，<br />
-              比如我是谁，<br />
-              我想去哪里，<br />
-              以及怎样才能对这个世界，<br />
-              温柔而坚定地存在。
-            </blockquote>
-            <svg class="pulse-line" viewBox="0 0 120 16" fill="none" aria-hidden="true">
-              <path d="M0 8 H46 l3 0 2.5 -5 3 9.5 3 -8 2.5 3.5 3 0 H120" />
-            </svg>
-          </article>
-
-          <article class="glass-card currently-card">
-            <header class="card-header">
-              <div>
-                <i data-lucide="heart"></i>
-                <h2>现在偏爱的东西</h2>
-              </div>
-              <span>Currently</span>
-            </header>
-            <div class="currently-list">
-              <span><i data-lucide="moon"></i>夜晚</span>
-              <span><i data-lucide="cloud-rain"></i>雨天</span>
-              <span><i data-lucide="sparkles"></i>低饱和霓虹</span>
-              <span><i data-lucide="cloud-sun"></i>干净的界面</span>
-              <span><i data-lucide="message-circle"></i>长对话</span>
-              <span><i data-lucide="map-pin"></i>远方</span>
-              <span><i data-lucide="fan"></i>风扇声</span>
-              <span><i data-lucide="lightbulb"></i>安静的灯光</span>
-            </div>
-            <p class="and-more">And more... ♡</p>
-          </article>
-        </section>
-
-        <footer class="footer-panel">
-          <div class="footer-copy">
-            <h2>想说点什么？</h2>
-            <p>我很乐意收到你的来信。</p>
-          </div>
-          <div class="socials" aria-label="社交链接">
-            <a href="#" aria-label="Email"><i data-lucide="mail"></i></a>
-            <a href="#" aria-label="GitHub">
-              <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 .9C5.9.9 1 5.8 1 11.9c0 4.9 3.2 9 7.6 10.4.6.1.8-.2.8-.5v-2c-3.1.7-3.8-1.3-3.8-1.3-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.7 1.9 2.9 1.4.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.5.1-3 0 0 .9-.3 3.1 1.1.9-.2 1.9-.4 2.9-.4s2 .1 2.9.4c2.1-1.4 3.1-1.1 3.1-1.1.6 1.5.2 2.7.1 3 .7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.3.8 1 .8 2v2.9c0 .3.2.6.8.5 4.4-1.5 7.5-5.6 7.5-10.4C23 5.8 18.1.9 12 .9Z"
-                />
+                <h2>一小段宇宙碎片</h2>
+              </header>
+              <blockquote>
+                我喜欢望着夜空发呆，<br />
+                想象我们都是宇宙中的微光，<br />
+                彼此遥远，却因为某种引力，<br />
+                在某个时刻相遇。
+              </blockquote>
+              <svg class="pulse-line" viewBox="0 0 120 16" fill="none" aria-hidden="true">
+                <path d="M0 8 H46 l3 0 2.5 -5 3 9.5 3 -8 2.5 3.5 3 0 H120" />
               </svg>
-            </a>
-            <a href="#" aria-label="Twitter">
-              <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M21.7 6.1c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.2 1.7-2.1-.7.4-1.6.8-2.4.9-.7-.7-1.7-1.2-2.8-1.2-2.1 0-3.8 1.7-3.8 3.8 0 .3 0 .6.1.9-3.2-.2-6-1.7-7.8-4-.3.6-.5 1.2-.5 1.9 0 1.3.7 2.5 1.7 3.1-.6 0-1.2-.2-1.7-.5v.1c0 1.9 1.3 3.4 3.1 3.8-.3.1-.7.1-1 .1-.3 0-.5 0-.7-.1.5 1.5 1.9 2.6 3.5 2.7-1.3 1-2.9 1.6-4.7 1.6-.3 0-.6 0-.9-.1 1.7 1.1 3.7 1.7 5.8 1.7 6.9 0 10.7-5.7 10.7-10.7v-.5c.8-.5 1.4-1.2 1.9-2Z"
+            </article>
+          </section>
+
+          <section class="orbit-card-row" aria-label="我的轨道">
+            <article>
+              <i data-lucide="sparkles"></i>
+              <h2>核心引力</h2>
+              <p>定义我的内核与方向的事物。</p>
+              <ul>
+                <li>成长与自我实现</li>
+                <li>真诚与温柔的连接</li>
+                <li>理解世界，也理解自己</li>
+                <li>创造与表达</li>
+                <li>自由、选择与可能性</li>
+              </ul>
+            </article>
+            <article>
+              <i data-lucide="moon"></i>
+              <h2>精神栖息地</h2>
+              <p>让我感到安稳与充电的氛围。</p>
+              <div class="orbit-mini-list">
+                <span><i data-lucide="moon"></i>夜晚</span>
+                <span><i data-lucide="lightbulb"></i>安静的灯光</span>
+                <span><i data-lucide="cloud-rain"></i>雨天</span>
+                <span><i data-lucide="home"></i>窗边</span>
+                <span><i data-lucide="fan"></i>风扇声</span>
+                <span><i data-lucide="sparkles"></i>低饱和霓虹</span>
+              </div>
+            </article>
+            <article>
+              <i data-lucide="brain"></i>
+              <h2>经常思考</h2>
+              <p>反复在心里打转的话题。</p>
+              <div class="orbit-pill-list">
+                <span>身份与自我认同</span>
+                <span>成为自己</span>
+                <span>归属感</span>
+                <span>意义</span>
+                <span>爱与关系</span>
+                <span>系统与秩序</span>
+                <span>美学与感知</span>
+                <span>理想与现实</span>
+                <span>…</span>
+              </div>
+            </article>
+            <article>
+              <i data-lucide="heart"></i>
+              <h2>和我共振</h2>
+              <p>我喜欢的连接方式。</p>
+              <ul>
+                <li>长而真诚的对话</li>
+                <li>温柔的理解与共情</li>
+                <li>能一起思考与感受的人</li>
+                <li>尊重彼此的独立与边界</li>
+                <li>在安静中也感到舒适</li>
+              </ul>
+            </article>
+            <article>
+              <i data-lucide="sparkles"></i>
+              <h2>理想状态</h2>
+              <p>我想要靠近的生活与自己。</p>
+              <ul>
+                <li>内心自由，精神丰盈</li>
+                <li>做喜欢的事，帮助他人</li>
+                <li>拥有时间与空间思考</li>
+                <li>在爱里，也在光里</li>
+                <li>一切刚刚好，又有无限可能</li>
+              </ul>
+            </article>
+          </section>
+
+          <p class="orbit-closing">愿我们都能在自己的轨道上，慢慢发光。 ♡</p>
+        </div>
+
+        <div class="page-view music-page" data-page="playlist">
+          <section class="music-hero" aria-labelledby="music-title">
+            <div class="music-intro">
+              <h1 id="music-title">声音星球</h1>
+              <p class="music-kicker">Playlist</p>
+              <p>
+                这里收藏着我循环过无数次的声音。<br />
+                戴上耳机，让它们带你绕着我的小宇宙，慢慢转一圈。
+              </p>
+            </div>
+            <div class="music-stat" data-music-stat aria-live="polite">
+              <i data-lucide="disc-3"></i>
+              <span class="music-stat-num" data-stat-num>—</span>
+              <span class="music-stat-label">首在库</span>
+            </div>
+          </section>
+
+          <section class="music-board" aria-label="音乐播放器">
+            <article class="now-playing" data-now-playing>
+              <div class="np-disc" data-np-disc aria-hidden="true">
+                <div class="np-disc-art">
+                  <img data-np-cover alt="" />
+                  <span class="np-disc-fallback"><i data-lucide="music"></i></span>
+                </div>
+                <span class="np-disc-hole"></span>
+              </div>
+
+              <div class="np-meta">
+                <p class="np-label">正在播放</p>
+                <h2 data-np-title>还没有声音</h2>
+                <p class="np-artist" data-np-artist>从右侧曲目里挑一首吧 ♡</p>
+              </div>
+
+              <div class="np-progress">
+                <input
+                  class="range np-seek"
+                  data-np-seek
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value="0"
+                  step="1"
+                  style="--fill: 0%"
+                  aria-label="播放进度"
                 />
-              </svg>
-            </a>
-            <a href="#" aria-label="Music"><i data-lucide="music"></i></a>
-          </div>
-          <div class="copyright">
-            <span>© 2024&nbsp; Sy Yann</span>
-            <i data-lucide="sparkles" aria-hidden="true"></i>
-          </div>
-        </footer>
+                <div class="np-times">
+                  <span data-np-current>0:00</span>
+                  <span data-np-duration>0:00</span>
+                </div>
+              </div>
+
+              <div class="np-controls">
+                <button class="np-btn" type="button" data-np-mode data-mode="loop" aria-label="播放模式">
+                  <span class="m-loop"><i data-lucide="repeat"></i></span>
+                  <span class="m-one"><i data-lucide="repeat-1"></i></span>
+                  <span class="m-shuffle"><i data-lucide="shuffle"></i></span>
+                </button>
+                <button class="np-btn" type="button" data-np-prev aria-label="上一首">
+                  <i data-lucide="skip-back"></i>
+                </button>
+                <button class="np-btn np-play" type="button" data-np-play aria-label="播放 / 暂停">
+                  <span class="i-play"><i data-lucide="play"></i></span>
+                  <span class="i-pause"><i data-lucide="pause"></i></span>
+                </button>
+                <button class="np-btn" type="button" data-np-next aria-label="下一首">
+                  <i data-lucide="skip-forward"></i>
+                </button>
+              </div>
+
+              <div class="np-volume">
+                <button class="np-btn np-vol-btn" type="button" data-np-mute aria-label="静音">
+                  <span class="i-vol"><i data-lucide="volume-2"></i></span>
+                  <span class="i-mute"><i data-lucide="volume-x"></i></span>
+                </button>
+                <input
+                  class="range np-vol"
+                  data-np-volume
+                  type="range"
+                  min="0"
+                  max="1"
+                  value="0.85"
+                  step="0.01"
+                  style="--fill: 85%"
+                  aria-label="音量"
+                />
+              </div>
+
+              <audio data-audio preload="metadata"></audio>
+            </article>
+
+            <article class="track-panel">
+              <header class="track-head">
+                <div class="track-head-title">
+                  <i data-lucide="list-music"></i>
+                  <h2>曲目</h2>
+                  <span class="track-count" data-track-count></span>
+                </div>
+                <div class="track-search">
+                  <i data-lucide="search"></i>
+                  <input
+                    type="search"
+                    data-search
+                    placeholder="搜索歌曲、歌手、专辑"
+                    aria-label="搜索曲目"
+                  />
+                </div>
+              </header>
+
+              <ol class="track-list" data-track-list></ol>
+
+              <div class="track-state" data-track-state hidden></div>
+            </article>
+          </section>
+        </div>
       </main>
     </div>
   </body>

@@ -1,39 +1,81 @@
 import {
+  Box,
+  Brain,
   CloudRain,
   CloudSun,
+  Code2,
+  Disc3,
   Fan,
   Heart,
   Home,
+  Landmark,
   Lightbulb,
+  ListMusic,
   Mail,
   MapPin,
   MessageCircle,
   Moon,
   Music,
   Orbit,
+  Paintbrush,
+  Pause,
+  PenLine,
+  Pencil,
+  Play,
   Quote,
+  Repeat,
+  Repeat1,
+  Search,
+  Shuffle,
+  SkipBack,
+  SkipForward,
   Sparkles,
+  Star,
   Venus,
+  Volume2,
+  VolumeX,
   createIcons,
 } from "lucide";
 
+import { initMusic } from "./music.js";
+
 createIcons({
   icons: {
+    Box,
+    Brain,
     CloudRain,
     CloudSun,
+    Code2,
+    Disc3,
     Fan,
     Heart,
     Home,
+    Landmark,
     Lightbulb,
+    ListMusic,
     Mail,
     MapPin,
     MessageCircle,
     Moon,
     Music,
     Orbit,
+    Paintbrush,
+    Pause,
+    PenLine,
+    Pencil,
+    Play,
     Quote,
+    Repeat,
+    Repeat1,
+    Search,
+    Shuffle,
+    SkipBack,
+    SkipForward,
     Sparkles,
+    Star,
     Venus,
+    Volume2,
+    VolumeX,
   },
   attrs: {
     "stroke-width": 1.7,
@@ -43,6 +85,8 @@ createIcons({
 const timePill = document.querySelector("[data-time-pill]");
 const daypart = document.querySelector("[data-daypart]");
 const timeDisplays = document.querySelectorAll("[data-time-display]");
+const pageViews = document.querySelectorAll("[data-page]");
+const viewLinks = document.querySelectorAll("[data-view-link]");
 
 function getDaypart(hour) {
   if (hour >= 5 && hour < 8) return "清晨";
@@ -85,3 +129,48 @@ function syncTime() {
 
 syncTime();
 window.setInterval(syncTime, 1000);
+
+function setView(view) {
+  const nextView = ["about", "orbit", "playlist"].includes(view) ? view : "home";
+
+  document.body.dataset.view = nextView;
+
+  if (nextView === "playlist") {
+    initMusic();
+  }
+
+  pageViews.forEach((page) => {
+    page.classList.toggle("is-active", page.dataset.page === nextView);
+  });
+
+  viewLinks.forEach((link) => {
+    const isCurrent = link.dataset.viewLink === nextView;
+
+    if (link.closest(".top-nav")) {
+      link.classList.toggle("is-current", isCurrent);
+    }
+
+    if (link.classList.contains("side-link")) {
+      link.classList.toggle("is-active", isCurrent);
+      link.toggleAttribute("aria-current", isCurrent);
+    }
+  });
+}
+
+viewLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const view = link.dataset.viewLink;
+
+    if (!view) return;
+
+    event.preventDefault();
+    window.history.pushState(null, "", `#${view}`);
+    setView(view);
+  });
+});
+
+window.addEventListener("popstate", () => {
+  setView(window.location.hash.slice(1));
+});
+
+setView(window.location.hash.slice(1));

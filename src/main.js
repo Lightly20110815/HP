@@ -124,6 +124,7 @@ function syncTime() {
 
   if (timePill) {
     timePill.setAttribute("aria-label", `${label} ${clock}`);
+    timePill.hidden = false;
   }
 }
 

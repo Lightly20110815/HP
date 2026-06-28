@@ -25,9 +25,9 @@
             <i data-lucide="home"></i>
             <span>Home</span>
           </a>
-          <a class="side-link" href="#">
+          <a class="side-link" href="#about" data-view-link="about">
             <i data-lucide="heart"></i>
-            <span>Thoughts</span>
+            <span>About</span>
           </a>
           <a class="side-link" href="#orbit" data-view-link="orbit">
             <i data-lucide="orbit"></i>
@@ -37,7 +37,7 @@
             <i data-lucide="music"></i>
             <span>Playlist</span>
           </a>
-          <a class="side-link" href="#">
+          <a class="side-link" href="mailto:swanyang7+hp@gmail.com">
             <i data-lucide="mail"></i>
             <span>Contact</span>
           </a>
@@ -58,10 +58,10 @@
           <a href="#playlist" data-view-link="playlist">Playlist</a>
         </nav>
 
-        <div class="time-pill" aria-label="夜晚 22:47" data-time-pill>
+        <div class="time-pill" aria-label="当前时间" data-time-pill hidden>
           <i data-lucide="sparkles"></i>
-          <span data-daypart>夜晚</span>
-          <time datetime="22:47" data-time-display>22:47</time>
+          <span data-daypart></span>
+          <time data-time-display></time>
         </div>
 
         <div class="page-view home-page is-active" data-page="home">
@@ -182,25 +182,39 @@
               <p>我很乐意收到你的来信。</p>
             </div>
             <div class="socials" aria-label="社交链接">
-              <a href="#" aria-label="Email"><i data-lucide="mail"></i></a>
-              <a href="#" aria-label="GitHub">
+              <a href="mailto:swanyang7+hp@gmail.com" aria-label="Email swanyang7+hp@gmail.com">
+                <i data-lucide="mail"></i>
+              </a>
+              <a
+                href="https://github.com/Lightly20110815"
+                aria-label="GitHub Lightly20110815"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     d="M12 .9C5.9.9 1 5.8 1 11.9c0 4.9 3.2 9 7.6 10.4.6.1.8-.2.8-.5v-2c-3.1.7-3.8-1.3-3.8-1.3-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.7 1.9 2.9 1.4.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.5.1-3 0 0 .9-.3 3.1 1.1.9-.2 1.9-.4 2.9-.4s2 .1 2.9.4c2.1-1.4 3.1-1.1 3.1-1.1.6 1.5.2 2.7.1 3 .7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.3.8 1 .8 2v2.9c0 .3.2.6.8.5 4.4-1.5 7.5-5.6 7.5-10.4C23 5.8 18.1.9 12 .9Z"
                   />
                 </svg>
               </a>
-              <a href="#" aria-label="Twitter">
+              <a
+                href="https://x.com/yxrchina"
+                aria-label="Twitter yxrchina"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     d="M21.7 6.1c-.7.3-1.4.5-2.2.6.8-.5 1.4-1.2 1.7-2.1-.7.4-1.6.8-2.4.9-.7-.7-1.7-1.2-2.8-1.2-2.1 0-3.8 1.7-3.8 3.8 0 .3 0 .6.1.9-3.2-.2-6-1.7-7.8-4-.3.6-.5 1.2-.5 1.9 0 1.3.7 2.5 1.7 3.1-.6 0-1.2-.2-1.7-.5v.1c0 1.9 1.3 3.4 3.1 3.8-.3.1-.7.1-1 .1-.3 0-.5 0-.7-.1.5 1.5 1.9 2.6 3.5 2.7-1.3 1-2.9 1.6-4.7 1.6-.3 0-.6 0-.9-.1 1.7 1.1 3.7 1.7 5.8 1.7 6.9 0 10.7-5.7 10.7-10.7v-.5c.8-.5 1.4-1.2 1.9-2Z"
                   />
                 </svg>
               </a>
-              <a href="#" aria-label="Music"><i data-lucide="music"></i></a>
+              <a href="#playlist" aria-label="Music playlist" data-view-link="playlist">
+                <i data-lucide="music"></i>
+              </a>
             </div>
             <div class="copyright">
-              <span>© 2024&nbsp; Sy Yann</span>
+              <span>© 2026&nbsp; Sy Yann</span>
               <i data-lucide="sparkles" aria-hidden="true"></i>
             </div>
           </footer>
@@ -240,7 +254,7 @@
                 </header>
                 <div class="about-tag-cloud" aria-label="关于我标签">
                   <span>她 / 她</span>
-                  <span>INFJ-T</span>
+                  <span>INFP-T</span>
                   <span>跨性别女孩</span>
                   <span>设计</span>
                   <span>写作</span>
@@ -461,7 +475,7 @@
             </div>
             <div class="music-stat" data-music-stat aria-live="polite">
               <i data-lucide="disc-3"></i>
-              <span class="music-stat-num" data-stat-num>—</span>
+              <span class="music-stat-num" data-stat-num>加载中</span>
               <span class="music-stat-label">首在库</span>
             </div>
           </section>
@@ -478,8 +492,8 @@
 
               <div class="np-meta">
                 <p class="np-label">正在播放</p>
-                <h2 data-np-title>还没有声音</h2>
-                <p class="np-artist" data-np-artist>从右侧曲目里挑一首吧 ♡</p>
+                <h2 data-np-title>正在加载曲目</h2>
+                <p class="np-artist" data-np-artist>连接音乐服务中</p>
               </div>
 
               <div class="np-progress">

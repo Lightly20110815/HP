@@ -133,6 +133,9 @@ async function loadTracks() {
     }
     setState(null);
     renderList();
+    if (!items.some((item) => item.id === state.currentId)) {
+      loadTrack(items[0], false);
+    }
   } catch (err) {
     setState(`没能连上音乐服务（${err.message}）。`, true);
     el.count.textContent = "";

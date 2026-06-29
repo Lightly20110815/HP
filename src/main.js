@@ -87,6 +87,7 @@ const daypart = document.querySelector("[data-daypart]");
 const timeDisplays = document.querySelectorAll("[data-time-display]");
 const pageViews = document.querySelectorAll("[data-page]");
 const viewLinks = document.querySelectorAll("[data-view-link]");
+const views = ["about", "orbit", "playlist", "contact"];
 
 function getDaypart(hour) {
   if (hour >= 5 && hour < 8) return "清晨";
@@ -131,9 +132,9 @@ function syncTime() {
 syncTime();
 window.setInterval(syncTime, 1000);
 
-function setView(view) {
-  const nextView = ["about", "orbit", "playlist"].includes(view) ? view : "home";
+let viewTransition = null;
 
+function applyView(nextView) {
   document.body.dataset.view = nextView;
 
   if (nextView === "playlist") {
@@ -142,6 +143,7 @@ function setView(view) {
 
   pageViews.forEach((page) => {
     page.classList.toggle("is-active", page.dataset.page === nextView);
+    page.classList.remove("is-exiting");
   });
 
   viewLinks.forEach((link) => {
@@ -156,6 +158,44 @@ function setView(view) {
       link.toggleAttribute("aria-current", isCurrent);
     }
   });
+}
+
+function setView(view) {
+  const nextView = views.includes(view) ? view : "home";
+  const currentActive = document.querySelector(".page-view.is-active");
+
+  if (!currentActive || currentActive.dataset.page === nextView) {
+    applyView(nextView);
+    return;
+  }
+
+  // View Transitions API: shared-element-like morph between pages
+  const useTransition = typeof document !== "undefined" && document.startViewTransition;
+
+  const doSwitch = () => {
+    if (viewTransition) {
+      viewTransition.abort();
+    }
+
+    const exitPage = currentActive;
+    exitPage.classList.add("is-exiting");
+
+    const onEnd = () => {
+      exitPage.removeEventListener("animationend", onEnd);
+      exitPage.classList.remove("is-exiting");
+      applyView(nextView);
+      viewTransition = null;
+    };
+
+    exitPage.addEventListener("animationend", onEnd);
+    viewTransition = { abort: () => exitPage.removeEventListener("animationend", onEnd) };
+  };
+
+  if (useTransition) {
+    document.startViewTransition(() => doSwitch());
+  } else {
+    doSwitch();
+  }
 }
 
 viewLinks.forEach((link) => {
@@ -175,3 +215,33 @@ window.addEventListener("popstate", () => {
 });
 
 setView(window.location.hash.slice(1));
+
+// ── Scroll-reveal fallback ─────────────────────
+// CSS animation-timeline: view() is not yet supported in Firefox/Safari.
+// When unavailable, IntersectionObserver drives the .is-revealed class.
+(function initScrollReveal() {
+  const supportsScrollDriven = CSS.supports("animation-timeline", "view()");
+  if (supportsScrollDriven) return;
+
+  const targets = document.querySelectorAll(
+    ".about-mini-grid article, .orbit-card-row article, .contact-grid .contact-card",
+  );
+
+  if (!targets.length) return;
+
+  targets.forEach((el) => el.classList.add("scroll-reveal-fallback"));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { rootMargin: "0px 0px -6% 0px", threshold: 0.1 },
+  );
+
+  targets.forEach((el) => observer.observe(el));
+})();

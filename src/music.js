@@ -1,4 +1,4 @@
-// Music page — talks to the self-hosted MusicApi (https://music.20110815.xyz).
+// Music page - talks to the self-hosted MusicApi (https://music.20110815.xyz).
 // Endpoints used:
 //   GET /api/tracks?limit=&q=        -> { data: { items[], pagination } }
 //   GET /api/tracks/{id}/audio       -> streamed audio (HTTP Range)
@@ -351,7 +351,6 @@ export function initMusic() {
   Object.assign(el, {
     board: $(".music-board", page),
     nowPlaying: $("[data-now-playing]", page),
-    disc: $("[data-np-disc]", page),
     cover: $("[data-np-cover]", page),
     title: $("[data-np-title]", page),
     artist: $("[data-np-artist]", page),

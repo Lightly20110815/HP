@@ -18,6 +18,60 @@
   --font-cn: "Noto Serif SC", "Songti SC", "STSong", serif;
   --font-script: "Allura", "Brush Script MT", "Segoe Script", cursive;
   --weight-thin: 300;
+
+  /* ── Motion tokens ───────────────────────────── */
+  /* Easing — one curve for hovers, one to materialize in, one to dissolve out */
+  --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-ease-materialize: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-dissolve: cubic-bezier(0.4, 0, 0.8, 0.2);
+
+  /* Duration scale */
+  --motion-fast: 150ms;   /* hover / press feedback */
+  --motion-medium: 220ms; /* the single page entrance */
+  --motion-slow: 300ms;   /* scroll reveal */
+}
+
+/*
+ * ── Motion keyframes ──────────────────────────
+ *
+ * One entrance per page: the whole view fades up as a single unit.
+ * No per-element stagger, no per-surface materialize, no scale-from-small.
+ * Enter = opacity + small translateY. Exit = opacity. Below-fold content
+ * gets one subtle scroll reveal. That's the whole vocabulary.
+ */
+
+/* The single page entrance */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page exit: a plain dissolve — subtler than the enter */
+@keyframes page-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Scroll-driven reveal: below-fold content, opacity + a small rise */
+@keyframes scroll-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 * {
@@ -138,7 +192,7 @@ a {
   gap: 7px;
   color: rgba(211, 207, 230, 0.55);
   font-size: 12px;
-  transition: color 180ms ease, transform 180ms ease;
+  transition: color var(--motion-fast) var(--motion-ease-out), text-shadow var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out);
 }
 
 .side-link svg {
@@ -150,8 +204,11 @@ a {
 .side-link:hover,
 .side-link.is-active {
   color: #e6b6ff;
-  transform: translateY(-1px);
   text-shadow: 0 0 14px rgba(227, 153, 255, 0.4);
+}
+
+.side-link:active {
+  transform: scale(0.96);
 }
 
 .side-link:focus {
@@ -174,6 +231,7 @@ a {
   background: #ffb4f1;
   box-shadow: 0 0 15px rgba(255, 180, 241, 0.95);
   content: "";
+  transition: opacity var(--motion-medium) var(--motion-ease-out), transform var(--motion-medium) var(--motion-ease-out);
 }
 
 .thanks-card {
@@ -239,7 +297,7 @@ a {
 .top-nav a {
   position: relative;
   padding: 6px 0 14px;
-  transition: color 180ms ease;
+  transition: color var(--motion-fast) var(--motion-ease-out);
 }
 
 .top-nav a:hover,
@@ -393,6 +451,19 @@ a {
     inset 0 0 42px rgba(120, 91, 200, 0.08),
     0 18px 56px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(18px);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+}
+
+.glass-card:hover {
+  border-color: rgba(224, 178, 255, 0.34);
+  background:
+    linear-gradient(180deg, rgba(25, 31, 74, 0.54), rgba(12, 17, 47, 0.58)),
+    rgba(10, 15, 42, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 42px rgba(120, 91, 200, 0.11),
+    0 22px 62px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -463,11 +534,11 @@ a {
 .text-link span {
   display: inline-block;
   margin-left: 7px;
-  transition: transform 180ms ease;
+  transition: transform var(--motion-fast) var(--motion-ease-out);
 }
 
 .text-link:hover span {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 .tag-cloud {
@@ -638,13 +709,17 @@ a {
   background: rgba(15, 20, 54, 0.45);
   color: rgba(235, 222, 250, 0.78);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 24px rgba(181, 130, 255, 0.08);
-  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  transition: border-color var(--motion-fast) var(--motion-ease-out), color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out);
 }
 
 .socials a:hover {
   border-color: rgba(242, 174, 255, 0.55);
   color: #ffc0f0;
   transform: translateY(-2px);
+}
+
+.socials a:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .socials svg {
@@ -678,10 +753,41 @@ a {
   display: none;
 }
 
+/*
+ * ── Page transition layer ─────────────────────
+ *
+ * One entrance per page: the whole view fades up as a single unit on enter,
+ * and plainly dissolves on exit. No per-element stagger, no per-surface
+ * materialize — that choreography is what made route changes read as
+ * "everything flying in from everywhere at once".
+ */
+.page-view.is-active {
+  animation: page-enter var(--motion-medium) var(--motion-ease-materialize) both;
+}
+
+.page-view.is-exiting {
+  display: block;
+  pointer-events: none;
+  animation: page-exit var(--motion-fast) var(--motion-ease-dissolve) both;
+}
+
 .home-page.is-active {
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+/*
+ * Below-fold content gets ONE subtle scroll reveal — the same range for every
+ * card (no per-item stagger), opacity + an 8px rise. CSS scroll-driven, with a
+ * JS IntersectionObserver fallback (see .scroll-reveal-fallback near the end).
+ */
+.about-mini-grid article,
+.orbit-card-row article,
+.contact-grid .contact-card {
+  animation: scroll-reveal linear both;
+  animation-timeline: view();
+  animation-range: entry 8% entry 90%;
 }
 
 .about-page.is-active {
@@ -776,6 +882,20 @@ body[data-view="about"] .time-pill {
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 22px 60px rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(18px);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+}
+
+.about-quote-card:hover,
+.about-profile-card:hover,
+.about-mini-grid article:hover {
+  border-color: rgba(242, 174, 255, 0.36);
+  background:
+    linear-gradient(180deg, rgba(25, 31, 74, 0.48), rgba(9, 14, 42, 0.56)),
+    rgba(9, 14, 40, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 64px rgba(0, 0, 0, 0.19);
+  transform: translateY(-2px);
 }
 
 .about-quote-card {
@@ -951,6 +1071,276 @@ body[data-view="about"] .time-pill {
 }
 
 .about-closing::after {
+  background: linear-gradient(90deg, rgba(239, 169, 238, 0.5), transparent);
+}
+
+.contact-page.is-active {
+  display: block;
+}
+
+.contact-page {
+  position: relative;
+  flex: 1;
+  padding: 38px 0 34px;
+}
+
+.contact-hero {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(320px, 0.72fr);
+  gap: clamp(28px, 5vw, 78px);
+  align-items: stretch;
+  max-width: 1080px;
+}
+
+.contact-copy {
+  min-width: 0;
+  padding-top: 18px;
+}
+
+.contact-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 12px;
+  color: rgba(231, 222, 248, 0.72);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+
+.contact-kicker::after {
+  width: 84px;
+  height: 1px;
+  background: linear-gradient(90deg, #edb2ed, transparent);
+  content: "";
+}
+
+.contact-copy h1 {
+  margin: 0 0 -0.08em;
+  padding-bottom: 0.14em;
+  color: transparent;
+  font-family: var(--font-cn);
+  font-size: clamp(58px, 5vw, 92px);
+  font-weight: var(--weight-thin);
+  line-height: 1.08;
+  background: linear-gradient(105deg, #ffc0ef 5%, #d7c4ff 48%, #9ab8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 18px rgba(196, 145, 255, 0.22));
+}
+
+.contact-copy p:not(.contact-kicker) {
+  max-width: 31rem;
+  margin: 18px 0 0;
+  color: rgba(228, 220, 242, 0.72);
+  font-family: var(--font-cn);
+  font-size: 15px;
+  line-height: 1.76;
+}
+
+.contact-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 28px;
+  padding: 0 20px;
+  border: 1px solid rgba(238, 178, 255, 0.56);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 192, 239, 0.18), transparent 62%),
+    rgba(35, 28, 86, 0.66);
+  color: #fff7ff;
+  font-family: var(--font-cn);
+  font-size: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 38px rgba(90, 61, 160, 0.26);
+  transition: border-color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+}
+
+.contact-primary:hover {
+  border-color: rgba(255, 192, 239, 0.78);
+  transform: translateY(-1px);
+}
+
+.contact-primary:active {
+  transform: translateY(0) scale(0.97);
+  transition: transform var(--motion-fast) var(--motion-ease-out);
+}
+
+.contact-primary svg {
+  width: 18px;
+  height: 18px;
+}
+
+.contact-visual {
+  position: relative;
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 30px 32px;
+  border: 1px solid rgba(202, 181, 255, 0.28);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(8, 10, 28, 0.04) 0%, rgba(8, 10, 28, 0.42) 48%, rgba(8, 10, 28, 0.92) 100%),
+    url("./assets/thanks-planet-card.png") center 12% / cover no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 22px 64px rgba(0, 0, 0, 0.22);
+}
+
+.contact-visual::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 42%);
+  content: "";
+  pointer-events: none;
+}
+
+.contact-planet {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  width: 66px;
+  height: 66px;
+  border: 1px solid rgba(240, 184, 255, 0.34);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 212, 249, 0.92), rgba(180, 151, 255, 0.58) 46%, rgba(54, 43, 119, 0.28) 72%);
+  box-shadow: 0 0 36px rgba(209, 170, 255, 0.42);
+}
+
+.contact-visual p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #fff7ff;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.contact-visual span {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  color: rgba(235, 229, 246, 0.68);
+  font-family: var(--font-cn);
+  font-size: 13px;
+  line-height: 1.58;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.18fr repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 1120px;
+  margin-top: 28px;
+}
+
+.contact-card {
+  display: flex;
+  min-width: 0;
+  min-height: 188px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 24px 22px;
+  border: 1px solid rgba(202, 181, 255, 0.22);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(22, 27, 65, 0.46), rgba(9, 14, 42, 0.54)),
+    rgba(9, 14, 40, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 20px 56px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(18px);
+  transition: border-color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out);
+}
+
+.contact-card:hover {
+  border-color: rgba(242, 174, 255, 0.52);
+  background:
+    linear-gradient(180deg, rgba(30, 35, 82, 0.56), rgba(12, 17, 48, 0.62)),
+    rgba(9, 14, 40, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 62px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.contact-card:active {
+  transform: translateY(-1px) scale(0.985);
+  transition: transform var(--motion-fast) var(--motion-ease-out);
+}
+
+.contact-card:focus-visible,
+.contact-primary:focus-visible {
+  outline: 1px solid rgba(238, 178, 255, 0.72);
+  outline-offset: 4px;
+}
+
+.contact-card svg {
+  width: 22px;
+  height: 22px;
+  color: #efa9ee;
+  filter: drop-shadow(0 0 10px rgba(239, 169, 238, 0.32));
+}
+
+.contact-card span {
+  margin-top: 24px;
+  color: rgba(231, 222, 248, 0.64);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.contact-card b {
+  margin-top: 7px;
+  color: rgba(255, 250, 255, 0.9);
+  font-family: var(--font-cn);
+  font-size: 18px;
+  font-weight: var(--weight-thin);
+  line-height: 1.28;
+  overflow-wrap: anywhere;
+}
+
+.contact-card small {
+  margin-top: auto;
+  padding-top: 20px;
+  color: rgba(233, 226, 246, 0.66);
+  font-family: var(--font-cn);
+  font-size: 12px;
+  line-height: 1.68;
+}
+
+.contact-card-primary {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(244, 169, 236, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(28, 31, 78, 0.58), rgba(9, 14, 42, 0.62)),
+    rgba(9, 14, 40, 0.5);
+}
+
+.contact-closing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 28px 0 0;
+  color: rgba(238, 203, 244, 0.76);
+  font-family: var(--font-cn);
+  font-size: 15px;
+  text-align: center;
+}
+
+.contact-closing::before,
+.contact-closing::after {
+  width: min(16vw, 150px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239, 169, 238, 0.5));
+  content: "";
+}
+
+.contact-closing::after {
   background: linear-gradient(90deg, rgba(239, 169, 238, 0.5), transparent);
 }
 
@@ -1220,6 +1610,20 @@ body[data-view="about"] .time-pill {
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 22px 60px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(18px);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+}
+
+.orbit-quote-card:hover,
+.orbit-fragment-card:hover,
+.orbit-card-row article:hover {
+  border-color: rgba(242, 174, 255, 0.34);
+  background:
+    linear-gradient(180deg, rgba(25, 31, 74, 0.48), rgba(9, 14, 42, 0.56)),
+    rgba(9, 14, 40, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 64px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
 }
 
 .orbit-quote-card {
@@ -1556,10 +1960,16 @@ body[data-view="about"] .time-pill {
     0 0 60px rgba(146, 112, 255, 0.26);
   animation: disc-spin 16s linear infinite;
   animation-play-state: paused;
+  will-change: transform;
+  transition: box-shadow var(--motion-slow) var(--motion-ease-out);
 }
 
 .music-board.is-playing .np-disc {
   animation-play-state: running;
+  box-shadow:
+    0 0 0 1px rgba(210, 186, 255, 0.28),
+    inset 0 0 36px rgba(0, 0, 0, 0.55),
+    0 0 72px rgba(146, 112, 255, 0.38);
 }
 
 @keyframes disc-spin {
@@ -1713,13 +2123,17 @@ body[data-view="about"] .time-pill {
   background: rgba(35, 28, 86, 0.5);
   color: rgba(238, 226, 250, 0.85);
   cursor: pointer;
-  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  transition: border-color var(--motion-fast) var(--motion-ease-out), color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
 }
 
 .np-btn:hover {
   border-color: rgba(238, 178, 255, 0.5);
   color: #fff;
   transform: translateY(-1px);
+}
+
+.np-btn:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .np-btn svg {
@@ -1884,7 +2298,7 @@ body[data-view="about"] .time-pill {
   font-family: var(--font-cn);
   font-size: 13px;
   outline: none;
-  transition: border-color 0.18s ease;
+  transition: border-color var(--motion-fast) var(--motion-ease-out);
 }
 
 .track-search input:focus {
@@ -1924,7 +2338,7 @@ body[data-view="about"] .time-pill {
   padding: 8px 10px;
   border-radius: 11px;
   cursor: pointer;
-  transition: background 0.16s ease;
+  transition: background var(--motion-fast) var(--motion-ease-out);
 }
 
 .track-row:hover {
@@ -2117,6 +2531,24 @@ body[data-view="about"] .time-pill {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .contact-hero {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 760px;
+  }
+
+  .contact-visual {
+    min-height: 300px;
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 760px;
+  }
+
+  .contact-card-primary {
+    grid-column: span 2;
+  }
+
   .orbit-hero {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2220,7 +2652,7 @@ body[data-view="about"] .time-pill {
   }
 
   .top-nav {
-    gap: 28px;
+    gap: 24px;
   }
 
   .time-pill {
@@ -2301,6 +2733,30 @@ body[data-view="about"] .time-pill {
 
   .about-mini-grid {
     grid-template-columns: 1fr;
+  }
+
+  .contact-page {
+    padding-top: 34px;
+  }
+
+  .contact-copy h1 {
+    font-size: clamp(48px, 13vw, 76px);
+  }
+
+  .contact-kicker {
+    font-size: 18px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-card-primary {
+    grid-column: auto;
+  }
+
+  .contact-card {
+    min-height: 164px;
   }
 
   .orbit-page {
@@ -2404,6 +2860,31 @@ body[data-view="about"] .time-pill {
     font-size: 15px;
   }
 
+  .contact-copy p:not(.contact-kicker) {
+    font-size: 14px;
+  }
+
+  .contact-visual {
+    min-height: 260px;
+    padding: 24px;
+  }
+
+  .contact-card {
+    padding: 22px;
+  }
+
+  .contact-closing {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .contact-closing::before,
+  .contact-closing::after {
+    width: 120px;
+    align-self: center;
+  }
+
   .fragments-card blockquote {
     padding-left: 39px;
     font-size: 14px;
@@ -2412,5 +2893,51 @@ body[data-view="about"] .time-pill {
   .socials a {
     width: 46px;
     height: 46px;
+  }
+}
+
+/*
+ * ── Reduced motion ────────────────────────────
+ *
+ * Respect the OS-level preference. For users who need stillness:
+ * - All animations/transitions complete instantly (0.01ms trick preserves final state).
+ * - Ambient looping animations are paused (they serve no functional purpose).
+ * - Scroll-driven reveals show content immediately.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Continuous animations — paused */
+  .np-disc {
+    animation-play-state: paused !important;
+  }
+}
+
+/* ── Scroll-reveal fallback (JS-driven, for browsers without animation-timeline) ──
+   Mirrors the @keyframes scroll-reveal: opacity + an 8px rise, no blur. */
+.scroll-reveal-fallback {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--motion-slow) var(--motion-ease-materialize),
+              transform var(--motion-slow) var(--motion-ease-materialize);
+}
+
+.scroll-reveal-fallback.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal-fallback {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

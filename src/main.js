@@ -129,21 +129,73 @@ function syncTime() {
   }
 }
 
-syncTime();
-window.setInterval(syncTime, 1000);
+function scheduleTimeSync() {
+  syncTime();
+
+  const now = new Date();
+  const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+  window.setTimeout(scheduleTimeSync, msUntilNextMinute + 50);
+}
+
+scheduleTimeSync();
 
 let viewTransition = null;
+let transitionToken = 0;
 
-function applyView(nextView) {
-  document.body.dataset.view = nextView;
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
-  if (nextView === "playlist") {
-    initMusic();
+function afterNextPaint(callback) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(callback);
+  });
+}
+
+function runViewWork(nextView, token) {
+  if (nextView !== "playlist") return;
+
+  afterNextPaint(() => {
+    if (token === transitionToken && document.body.dataset.view === nextView) {
+      initMusic();
+    }
+  });
+}
+
+function cancelTransition() {
+  if (!viewTransition) return;
+
+  if (typeof viewTransition.cancel === "function") {
+    viewTransition.cancel();
+  } else if (typeof viewTransition.skipTransition === "function") {
+    viewTransition.skipTransition();
   }
 
+  viewTransition = null;
+  document.body.classList.remove("is-route-transitioning");
+}
+
+function applyView(nextView, options = {}) {
+  document.body.dataset.view = nextView;
+
   pageViews.forEach((page) => {
-    page.classList.toggle("is-active", page.dataset.page === nextView);
-    page.classList.remove("is-exiting");
+    const isActive = page.dataset.page === nextView;
+
+    page.classList.toggle("is-active", isActive);
+    page.classList.remove("is-exiting", "is-entering");
+
+    if (isActive && options.animate) {
+      page.classList.add("is-entering");
+      page.addEventListener(
+        "animationend",
+        (event) => {
+          if (event.target === page) {
+            page.classList.remove("is-entering");
+          }
+        },
+        { once: true },
+      );
+    }
   });
 
   viewLinks.forEach((link) => {
@@ -160,42 +212,80 @@ function applyView(nextView) {
   });
 }
 
-function setView(view) {
+function setView(view, options = {}) {
   const nextView = views.includes(view) ? view : "home";
   const currentActive = document.querySelector(".page-view.is-active");
+  const token = ++transitionToken;
+  const animate = options.animate !== false;
 
   if (!currentActive || currentActive.dataset.page === nextView) {
     applyView(nextView);
+    runViewWork(nextView, token);
     return;
   }
 
-  // View Transitions API: shared-element-like morph between pages
-  const useTransition = typeof document !== "undefined" && document.startViewTransition;
+  cancelTransition();
+
+  if (!animate || prefersReducedMotion()) {
+    applyView(nextView);
+    runViewWork(nextView, token);
+    return;
+  }
+
+  // Native View Transitions keep route changes on browser-managed snapshots.
+  if (typeof document !== "undefined" && document.startViewTransition) {
+    document.body.classList.add("is-route-transitioning");
+    viewTransition = document.startViewTransition(() => {
+      applyView(nextView);
+    });
+
+    viewTransition.finished
+      .finally(() => {
+        if (token !== transitionToken) return;
+
+        document.body.classList.remove("is-route-transitioning");
+        viewTransition = null;
+        runViewWork(nextView, token);
+      })
+      .catch(() => {});
+
+    return;
+  }
 
   const doSwitch = () => {
-    if (viewTransition) {
-      viewTransition.abort();
-    }
-
     const exitPage = currentActive;
     exitPage.classList.add("is-exiting");
+    document.body.classList.add("is-route-transitioning");
+    let timeoutId = null;
 
-    const onEnd = () => {
+    const onEnd = (event) => {
+      if (event && event.target !== exitPage) return;
+
       exitPage.removeEventListener("animationend", onEnd);
+      window.clearTimeout(timeoutId);
+
+      if (token !== transitionToken) return;
+
       exitPage.classList.remove("is-exiting");
-      applyView(nextView);
+      document.body.classList.remove("is-route-transitioning");
+      applyView(nextView, { animate: true });
       viewTransition = null;
+      runViewWork(nextView, token);
     };
 
     exitPage.addEventListener("animationend", onEnd);
-    viewTransition = { abort: () => exitPage.removeEventListener("animationend", onEnd) };
+    timeoutId = window.setTimeout(onEnd, 240);
+
+    viewTransition = {
+      cancel: () => {
+        exitPage.removeEventListener("animationend", onEnd);
+        window.clearTimeout(timeoutId);
+        exitPage.classList.remove("is-exiting");
+      },
+    };
   };
 
-  if (useTransition) {
-    document.startViewTransition(() => doSwitch());
-  } else {
-    doSwitch();
-  }
+  doSwitch();
 }
 
 viewLinks.forEach((link) => {
@@ -214,7 +304,7 @@ window.addEventListener("popstate", () => {
   setView(window.location.hash.slice(1));
 });
 
-setView(window.location.hash.slice(1));
+setView(window.location.hash.slice(1), { animate: false });
 
 // ── Scroll-reveal fallback ─────────────────────
 // CSS animation-timeline: view() is not yet supported in Firefox/Safari.

@@ -62,6 +62,26 @@
   }
 }
 
+@keyframes view-transition-new {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes view-transition-old {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Scroll-driven reveal: below-fold content, opacity + a small rise */
 @keyframes scroll-reveal {
   from {
@@ -451,7 +471,7 @@ a {
     inset 0 0 42px rgba(120, 91, 200, 0.08),
     0 18px 56px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(18px);
-  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
 }
 
 .glass-card:hover {
@@ -749,8 +769,29 @@ a {
   stroke-width: 1.7;
 }
 
+:root {
+  view-transition-name: none;
+}
+
 .page-view {
   display: none;
+}
+
+.page-view.is-active {
+  view-transition-name: page-view;
+}
+
+::view-transition-old(page-view),
+::view-transition-new(page-view) {
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(page-view) {
+  animation: view-transition-old var(--motion-fast) var(--motion-ease-dissolve) both;
+}
+
+::view-transition-new(page-view) {
+  animation: view-transition-new var(--motion-medium) var(--motion-ease-materialize) both;
 }
 
 /*
@@ -761,14 +802,18 @@ a {
  * materialize — that choreography is what made route changes read as
  * "everything flying in from everywhere at once".
  */
-.page-view.is-active {
+.page-view.is-entering {
   animation: page-enter var(--motion-medium) var(--motion-ease-materialize) both;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
 }
 
 .page-view.is-exiting {
   display: block;
   pointer-events: none;
   animation: page-exit var(--motion-fast) var(--motion-ease-dissolve) both;
+  backface-visibility: hidden;
+  will-change: opacity;
 }
 
 .home-page.is-active {
@@ -882,7 +927,7 @@ body[data-view="about"] .time-pill {
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 22px 60px rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(18px);
-  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
 }
 
 .about-quote-card:hover,
@@ -1255,7 +1300,7 @@ body[data-view="about"] .time-pill {
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 20px 56px rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(18px);
-  transition: border-color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out);
+  transition: border-color var(--motion-fast) var(--motion-ease-out), transform var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
 }
 
 .contact-card:hover {
@@ -1610,7 +1655,7 @@ body[data-view="about"] .time-pill {
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
     0 22px 60px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(18px);
-  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), box-shadow var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
+  transition: transform var(--motion-fast) var(--motion-ease-out), border-color var(--motion-fast) var(--motion-ease-out), background var(--motion-fast) var(--motion-ease-out);
 }
 
 .orbit-quote-card:hover,
@@ -1961,7 +2006,6 @@ body[data-view="about"] .time-pill {
   animation: disc-spin 16s linear infinite;
   animation-play-state: paused;
   will-change: transform;
-  transition: box-shadow var(--motion-slow) var(--motion-ease-out);
 }
 
 .music-board.is-playing .np-disc {
@@ -2896,6 +2940,25 @@ body[data-view="about"] .time-pill {
   }
 }
 
+@media (max-width: 900px) {
+  .time-pill,
+  .sidebar,
+  .glass-card,
+  .footer-panel,
+  .about-quote-card,
+  .about-profile-card,
+  .about-mini-grid article,
+  .orbit-quote-card,
+  .orbit-fragment-card,
+  .orbit-card-row article,
+  .contact-card,
+  .music-stat,
+  .now-playing,
+  .track-panel {
+    backdrop-filter: blur(10px);
+  }
+}
+
 /*
  * ── Reduced motion ────────────────────────────
  *
@@ -2917,6 +2980,12 @@ body[data-view="about"] .time-pill {
   /* Continuous animations — paused */
   .np-disc {
     animation-play-state: paused !important;
+  }
+
+  ::view-transition-old(page-view),
+  ::view-transition-new(page-view) {
+    animation-duration: 0.01ms !important;
+    transform: none !important;
   }
 }
 

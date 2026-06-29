@@ -16,6 +16,8 @@ const state = {
   currentId: null, // id of the loaded track
   mode: "loop", // loop | one | shuffle
   inited: false,
+  loadingStarted: false,
+  loadingScheduled: false,
 };
 
 let audio;
@@ -23,6 +25,38 @@ let seeking = false;
 const el = {};
 
 const $ = (sel, root = document) => root.querySelector(sel);
+const TRACK_RENDER_CHUNK = 48;
+
+let listRenderToken = 0;
+
+function afterNextPaint(callback) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(callback);
+  });
+}
+
+function scheduleIdle(callback, timeout = 500) {
+  if (typeof window.requestIdleCallback === "function") {
+    return window.requestIdleCallback(callback, { timeout });
+  }
+
+  return window.setTimeout(() => {
+    callback({
+      didTimeout: true,
+      timeRemaining: () => 16,
+    });
+  }, 0);
+}
+
+function findTrackRow(id) {
+  if (!id) return null;
+
+  if (window.CSS && typeof CSS.escape === "function") {
+    return el.list.querySelector(`.track-row[data-id="${CSS.escape(id)}"]`);
+  }
+
+  return Array.from(el.list.children).find((row) => row.dataset.id === id) || null;
+}
 
 function fmtTime(sec) {
   if (!Number.isFinite(sec) || sec < 0) return "0:00";
@@ -40,47 +74,86 @@ function esc(str) {
 
 const coverUrl = (t) => (t.hasCover ? `${API}${t.urls.cover}` : null);
 const audioUrl = (t) => `${API}${t.urls.audio}`;
-const currentTrack = () => state.tracks.find((t) => t.id === state.currentId) || null;
-
 // ---- rendering -------------------------------------------------------------
 
-function renderList() {
-  const rows = state.view
-    .map((t, i) => {
-      const cover = coverUrl(t);
-      const sub = [t.artist, t.album].filter(Boolean).join(" · ");
-      const art = cover
-        ? `<img class="track-cover-img" src="${esc(cover)}" loading="lazy" alt="" />`
-        : `<span class="track-cover-fallback">${MUSIC_SVG}</span>`;
-      return `
-        <li class="track-row" data-id="${esc(t.id)}" role="button" tabindex="0"
-            aria-label="播放 ${esc(t.title)}">
-          <span class="track-num">
-            <b>${String(i + 1).padStart(2, "0")}</b>
-            <span class="track-eq" aria-hidden="true"><i></i><i></i><i></i></span>
-          </span>
-          <span class="track-cover">${art}</span>
-          <span class="track-meta">
-            <b class="track-title">${esc(t.title || t.filename)}</b>
-            <span class="track-sub">${esc(sub || "未知艺术家")}</span>
-          </span>
-          <span class="track-dur">${fmtTime(t.duration)}</span>
-        </li>`;
-    })
-    .join("");
+function renderRow(track, index) {
+  const cover = coverUrl(track);
+  const sub = [track.artist, track.album].filter(Boolean).join(" · ");
+  const art = cover
+    ? `<img class="track-cover-img" src="${esc(cover)}" loading="lazy" decoding="async" alt="" />`
+    : `<span class="track-cover-fallback">${MUSIC_SVG}</span>`;
+  const isCurrent = track.id === state.currentId;
 
-  el.list.innerHTML = rows;
-  markActive();
+  return `
+    <li class="track-row${isCurrent ? " is-current" : ""}" data-id="${esc(track.id)}" role="button" tabindex="0"
+        aria-label="播放 ${esc(track.title)}"${isCurrent ? ' aria-current="true"' : ""}>
+      <span class="track-num">
+        <b>${String(index + 1).padStart(2, "0")}</b>
+        <span class="track-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      </span>
+      <span class="track-cover">${art}</span>
+      <span class="track-meta">
+        <b class="track-title">${esc(track.title || track.filename)}</b>
+        <span class="track-sub">${esc(sub || "未知艺术家")}</span>
+      </span>
+      <span class="track-dur">${fmtTime(track.duration)}</span>
+    </li>`;
+}
+
+function renderList() {
+  const token = ++listRenderToken;
+  const items = state.view.slice();
+  let index = 0;
+
+  el.list.replaceChildren();
+
+  if (!items.length) return;
+
+  const renderChunk = (deadline) => {
+    if (token !== listRenderToken) return;
+
+    const startedAt = performance.now();
+    const rows = [];
+
+    while (index < items.length) {
+      rows.push(renderRow(items[index], index));
+      index += 1;
+
+      const idleTimeLow =
+        deadline && typeof deadline.timeRemaining === "function" && deadline.timeRemaining() < 4;
+      const chunkBudgetSpent = performance.now() - startedAt > 8;
+
+      if (rows.length >= TRACK_RENDER_CHUNK || idleTimeLow || chunkBudgetSpent) {
+        break;
+      }
+    }
+
+    if (rows.length) {
+      el.list.insertAdjacentHTML("beforeend", rows.join(""));
+    }
+
+    if (index < items.length) {
+      scheduleIdle(renderChunk, 300);
+    } else {
+      markActive();
+    }
+  };
+
+  scheduleIdle(renderChunk, 300);
 }
 
 function markActive() {
-  const rows = el.list.querySelectorAll(".track-row");
-  rows.forEach((row) => {
-    const on = row.dataset.id === state.currentId;
-    row.classList.toggle("is-current", on);
-    if (on) row.setAttribute("aria-current", "true");
-    else row.removeAttribute("aria-current");
-  });
+  const previous = el.list.querySelector(".track-row.is-current");
+  if (previous) {
+    previous.classList.remove("is-current");
+    previous.removeAttribute("aria-current");
+  }
+
+  const next = findTrackRow(state.currentId);
+  if (next) {
+    next.classList.add("is-current");
+    next.setAttribute("aria-current", "true");
+  }
 }
 
 function setState(message, withRetry = false) {
@@ -132,10 +205,12 @@ async function loadTracks() {
       return;
     }
     setState(null);
-    renderList();
+
     if (!items.some((item) => item.id === state.currentId)) {
       loadTrack(items[0], false);
     }
+
+    renderList();
   } catch (err) {
     setState(`没能连上音乐服务（${err.message}）。`, true);
     el.count.textContent = "";
@@ -341,8 +416,29 @@ function bindList() {
 
 // ---- init (lazy, on first visit to the Playlist view) ----------------------
 
+function scheduleLoadTracks() {
+  if (state.loadingStarted || state.loadingScheduled) return;
+
+  state.loadingScheduled = true;
+
+  afterNextPaint(() => {
+    scheduleIdle(() => {
+      state.loadingScheduled = false;
+
+      if (state.loadingStarted || document.body.dataset.view !== "playlist") return;
+
+      state.loadingStarted = true;
+      loadTracks();
+    }, 800);
+  });
+}
+
 export function initMusic() {
-  if (state.inited) return;
+  if (state.inited) {
+    scheduleLoadTracks();
+    return;
+  }
+
   const page = $('[data-page="playlist"]');
   if (!page) return;
   state.inited = true;
@@ -373,5 +469,5 @@ export function initMusic() {
   bindAudio();
   bindControls();
   bindList();
-  loadTracks();
+  scheduleLoadTracks();
 }
